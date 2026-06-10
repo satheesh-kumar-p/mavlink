@@ -619,13 +619,13 @@
         Front Motor Controller Faults
       </field>
 
-<!--      <field type="uint8_t" name="rear_mc_voltage">Left Motor Controller Voltage (Unit: 0.1 V)</field>-->
+      <field type="uint8_t" name="rear_mc_voltage">Left Motor Controller Voltage (Unit: 0.1 V)</field>
 
-<!--      <field type="uint8_t" name="front_mc_voltage">Right Motor Controller Voltage (Unit: 0.1 V)</field>-->
+      <field type="uint8_t" name="front_mc_voltage">Right Motor Controller Voltage (Unit: 0.1 V)</field>
 
-<!--      <field type="uint8_t" name="rear_mc_temperature">Left Motor Controller Temperature (Unit: 1 Degree Celsius)</field>-->
+      <field type="uint8_t" name="rear_mc_temperature">Left Motor Controller Temperature (Unit: 1 Degree Celsius)</field>
 
-<!--      <field type="uint8_t" name="front_mc_temperature">Right Motor Controller Temperature (Unit: 1 Degree Celsius)</field>-->
+      <field type="uint8_t" name="front_mc_temperature">Right Motor Controller Temperature (Unit: 1 Degree Celsius)</field>
 
       <!-- light status -->
       <field type="uint8_t" name="light_status">
