@@ -1,242 +1,368 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mavlink>
-    <version>2</version>
+  <version>2</version>
 
-    <enums>
-        <enum name="MAV_STATE">
-            <description>Current operational system status state flags[cite: 1412, 1516].</description>
-            <entry value="0" name="MAV_STATE_UNINIT"/>
-            <entry value="3" name="MAV_STATE_STANDBY"/>
-            <entry value="4" name="MAV_STATE_ACTIVE"/>
-        </enum>
+  <enums>
+    <enum name="MAV_TYPE">
+      <description>MAVLINK component type reported in HEARTBEAT message.</description>
+      <entry value="0" name="MAV_TYPE_GENERIC">
+        <description>Generic micro air vehicle</description>
+      </entry>
+      <entry value="6" name="MAV_TYPE_GCS">
+        <description>Ground Control Station terminal node interface</description>
+      </entry>
+      <entry value="18" name="MAV_TYPE_ONBOARD_CONTROLLER">
+        <description>Onboard companion controller</description>
+      </entry>
+    </enum>
 
-        <enum name="MAV_TYPE">
-            <description>Type of the component system specification layout[cite: 1411, 1515].</description>
-            <entry value="6" name="MAV_TYPE_GCS"/>
-            <entry value="18" name="MAV_TYPE_ONBOARD_CONTROLLER"/>
-        </enum>
+    <enum name="MAV_AUTOPILOT">
+      <description>Micro air vehicle / autopilot classes. This identifies the individual model.</description>
+      <entry value="0" name="MAV_AUTOPILOT_GENERIC">
+        <description>Generic autopilot, full support for everything</description>
+      </entry>
+      <entry value="8" name="MAV_AUTOPILOT_INVALID">
+        <description>No valid autopilot, e.g. a GCS or other MAVLink component</description>
+      </entry>
+    </enum>
 
-        <enum name="MAV_AUTOPILOT">
-            <description>Type of autopilot framework tracking index flags[cite: 1411, 1516].</description>
-            <entry value="8" name="MAV_AUTOPILOT_INVALID"/>
-        </enum>
+    <enum name="MAV_STATE">
+      <entry value="0" name="MAV_STATE_UNINIT">
+        <description>Uninitialized system, state is unknown.</description>
+      </entry>
+      <entry value="3" name="MAV_STATE_STANDBY">
+        <description>System is grounded and on standby. It can be launched any time.</description>
+      </entry>
+      <entry value="4" name="MAV_STATE_ACTIVE">
+        <description>System is active. Motors are engaged.</description>
+      </entry>
+    </enum>
 
-        <enum name="MAV_RESULT">
-            <description>The result of the command execution status tracking[cite: 1441, 1503].</description>
-            <entry value="0" name="MAV_RESULT_ACCEPTED"/>
-            <entry value="1" name="MAV_RESULT_TEMPORARILY_REJECTED"/>
-            <entry value="3" name="MAV_RESULT_UNSUPPORTED"/>
-            <entry value="4" name="MAV_RESULT_FAILED"/>
-        </enum>
+    <enum name="MAV_CMD">
+      <description>Commands to be executed by the UGV platform via COMMAND_LONG packet structures.</description>
+      <entry value="176" name="MAV_CMD_DO_SET_MODE" hasLocation="false" isDestination="false">
+        <description>Set system mode.</description>
+        <param index="1" label="Mode" enum="MAV_MODE_FLAG">Mode flags.</param>
+        <param index="2" label="Custom Mode" enum="UGV_MAIN_MODE">Main mode selection for UGV</param>
+        <param index="3" label="Custom Submode" enum="UGV_SUB_MODE">Sub mode selection for UGV</param>
+        <param index="4" label="Speed Submode" enum="UGV_SPEED_MODE">Speed sub mode selection</param>
+        <param index="5">Empty</param>
+        <param index="6">Empty</param>
+        <param index="7">Empty</param>
+      </entry>
+      <entry value="400" name="MAV_CMD_COMPONENT_ARM_DISARM" hasLocation="false" isDestination="false">
+        <description>Arms / Disarms a component</description>
+        <param index="1" label="Arm" enum="MAV_BOOL">Arm (MAV_BOOL_FALSE: disarm).</param>
+        <param index="2" label="Force" minValue="0" maxValue="21196" increment="21196">0: arm-disarm unless prevented by safety checks, 21196: force arming/disarming</param>
+      </entry>
+      <entry value="31900" name="MAV_CMD_DRIVE_MODE" hasLocation="false" isDestination="false">
+        <description>Command to change drive mode of UGV</description>
+        <param index="1" label="Drive Mode Request" enum="UGV_DRIVE_MODE">Drive mode request.</param>
+        <param index="2">Empty</param>
+        <param index="3">Empty</param>
+        <param index="4">Empty</param>
+        <param index="5">Empty</param>
+        <param index="6">Empty</param>
+        <param index="7">Empty</param>
+      </entry>
+      <entry value="31901" name="MAV_CMD_LIGHT_CONTROL" hasLocation="false" isDestination="false">
+        <description>Command to change light state of UGV</description>
+        <param index="1" label="Head Light" enum="MAV_BOOL">ON (MAV_BOOL_FALSE: OFF).</param>
+        <param index="2" label="Front Fog Light" enum="MAV_BOOL">ON (MAV_BOOL_FALSE: OFF).</param>
+        <param index="3" label="Rear Brake Light" enum="MAV_BOOL">ON (MAV_BOOL_FALSE: OFF).</param>
+        <param index="4">Empty</param>
+        <param index="5">Empty</param>
+        <param index="6">Empty</param>
+        <param index="7">Empty</param>
+      </entry>
+      <entry value="31902" name="MAV_CMD_CAMERA_MARKER_CONTROL" hasLocation="false" isDestination="false">
+        <description>Commands the UGV to select a specific camera stream and toggle overlay range markers.</description>
+        <param index="1" label="Camera Selection" enum="ICD_CAMERA_STREAM">Select camera index channel stream [1-4].</param>
+        <param index="2" label="Range Markers" enum="MAV_BOOL">Toggle layout overlay indicators (0: OFF, 1: ON).</param>
+        <param index="3">Empty</param>
+        <param index="4">Empty</param>
+        <param index="5">Empty</param>
+        <param index="6">Empty</param>
+        <param index="7">Empty</param>
+      </entry>
+    </enum>
 
-        <enum name="GPS_FIX_TYPE">
-            <description>Type of GNSS position fix quality solution[cite: 1623].</description>
-            <entry value="0" name="GPS_FIX_TYPE_NO_GPS"/>
-            <entry value="1" name="GPS_FIX_TYPE_NO_FIX"/>
-            <entry value="2" name="GPS_FIX_TYPE_3D_FIX"/>
-            <entry value="3" name="GPS_FIX_TYPE_2D_FIX"/>
-            <entry value="4" name="GPS_FIX_TYPE_DGPS"/>
-            <entry value="5" name="GPS_FIX_TYPE_RTK_FLOAT"/>
-            <entry value="6" name="GPS_FIX_TYPE_RTK_FIXED"/>
-        </enum>
+    <enum name="MAV_RESULT">
+      <entry value="0" name="MAV_RESULT_ACCEPTED"/>
+      <entry value="1" name="MAV_RESULT_TEMPORARILY_REJECTED"/>
+      <entry value="2" name="MAV_RESULT_DENIED"/>
+      <entry value="3" name="MAV_RESULT_UNSUPPORTED"/>
+      <entry value="4" name="MAV_RESULT_FAILED"/>
+      <entry value="5" name="MAV_RESULT_IN_PROGRESS"/>
+      <entry value="6" name="MAV_RESULT_CANCELLED"/>
+    </enum>
 
-        <enum name="UGV_MAIN_MODE">
-            <entry value="1" name="MODE_A"/>
-            <entry value="2" name="MODE_B"/>
-        </enum>
+    <enum name="MAV_BOOL">
+      <entry value="0" name="MAV_BOOL_FALSE"/>
+      <entry value="1" name="MAV_BOOL_TRUE"/>
+    </enum>
 
-        <enum name="UGV_HOLD_SUB_MODE">
-            <entry value="1" name="UGV_HOLD_SUB_MODE_DISABLED"/>
-            <entry value="2" name="UGV_HOLD_SUB_MODE_ENABLED"/>
-        </enum>
+    <enum name="MAV_MODE_FLAG" bitmask="true">
+      <entry value="128" name="MAV_MODE_FLAG_SAFETY_ARMED"/>
+      <entry value="64" name="MAV_MODE_FLAG_MANUAL_INPUT_ENABLED"/>
+      <entry value="1" name="MAV_MODE_FLAG_CUSTOM_MODE_ENABLED"/>
+    </enum>
 
-        <enum name="UGV_SPEED_SUB_MODE">
-            <entry value="1" name="UGV_SPEED_MODE_LOW"/>
-            <entry value="2" name="UGV_SPEED_MODE_MEDIUM"/>
-            <entry value="3" name="UGV_SPEED_MODE_HIGH"/>
-        </enum>
+    <enum name="UGV_MAIN_MODE">
+      <entry value="1" name="MODE_A">
+        <description>Mode A, Hand Controller</description>
+      </entry>
+      <entry value="2" name="MODE_B">
+        <description>Mode B, GCS</description>
+      </entry>
+    </enum>
 
-        <enum name="UGV_DRIVE_SUB_MODE">
-            <entry value="1" name="UGV_DRIVE_MODE_SPEED"/>
-            <entry value="2" name="UGV_DRIVE_MODE_TORQUE"/>
-            <entry value="3" name="UGV_DRIVE_MODE_TORQUE_LIMIT_SPEED"/>
-            <entry value="4" name="UGV_DRIVE_MODE_POSITION"/>
-        </enum>
+    <enum name="UGV_SUB_MODE">
+      <entry value="0" name="NONE"/>
+      <entry value="10" name="HOLD"/>
+    </enum>
 
-        <enum name="UGV_ARM_REQUEST_FLAG">
-            <entry value="1" name="UGV_ARM_REQUEST_ARM"/>
-            <entry value="2" name="UGV_ARM_REQUEST_DISARM"/>
-        </enum>
+    <enum name="UGV_SPEED_MODE">
+      <entry value="1" name="LOW"/>
+      <entry value="2" name="MEDIUM"/>
+      <entry value="3" name="HIGH"/>
+    </enum>
 
-        <enum name="UGV_LIGHT_STATE_CMD">
-            <entry value="0" name="UGV_LIGHT_STATE_OFF"/>
-            <entry value="1" name="UGV_LIGHT_STATE_ON"/>
-        </enum>
+    <enum name="UGV_DRIVE_MODE">
+      <entry value="1" name="SPEED"/>
+      <entry value="2" name="TORQUE"/>
+      <entry value="3" name="TORQUE_WITH_SPEED_LIMIT"/>
+      <entry value="4" name="POSITION"/>
+    </enum>
 
-        <enum name="UGV_CAMERA_STREAM_SELECT">
-            <entry value="0" name="UGV_CAMERA_STREAM_RESERVED"/>
-            <entry value="1" name="UGV_CAMERA_STREAM_1"/>
-            <entry value="2" name="UGV_CAMERA_STREAM_2"/>
-            <entry value="3" name="UGV_CAMERA_STREAM_3"/>
-            <entry value="4" name="UGV_CAMERA_STREAM_4"/>
-        </enum>
-    </enums>
+    <enum name="MODE_CHANGE_REASON">
+      <entry value="0" name="GCS_COMMAND"/>
+      <entry value="1" name="FAILSAFE"/>
+      <entry value="2" name="SENSOR_FAULT"/>
+      <entry value="3" name="COMM_LOSS"/>
+    </enum>
 
-    <messages>
-        <message id="0" name="HEARTBEAT">
-            <description>System heartbeat indicating a node (COMP, HC, or GCS) is alive and transmitting its core configuration parameters[cite: 1401, 1510, 1511].</description>
-            <field type="uint32_t" name="custom_mode">A bitmask or unique index of custom mode parameters; not used/zero default[cite: 1412, 1516].</field>
-            <field type="uint8_t" name="type" enum="MAV_TYPE">Type of the component transmitting the heartbeat framework[cite: 1411, 1515].</field>
-            <field type="uint8_t" name="autopilot" enum="MAV_AUTOPILOT">Autopilot framework indicator flag type[cite: 1411, 1516].</field>
-            <field type="uint8_t" name="base_mode">Base mode hardware execution bitmask flags[cite: 1412, 1516].</field>
-            <field type="uint8_t" name="system_status" enum="MAV_STATE">Current operational state flag of the transmitting system[cite: 1412, 1516].</field>
-            <field type="uint8_t_mavlink_version" name="mavlink_version">Automated protocol version validation tracker index[cite: 1412, 1516].</field>
-        </message>
+    <enum name="UGV_HEALTH_STATE">
+      <entry value="0" name="RESERVED_STATE"/>
+      <entry value="1" name="NO_COMMUNICATION_STATE"/>
+      <entry value="2" name="COMMUNICATING_HEALTHY_STATE"/>
+      <entry value="3" name="FAULT_STATE"/>
+    </enum>
 
-        <message id="2" name="SYSTEM_TIME">
-            <description>Provides the synchronized timestamp baseline parameters directly from the Main Compute clock layer[cite: 1584, 1614].</description>
-            <field type="uint64_t" name="time_unix_usec">Unix Epoch Timestamp: The absolute current time in microseconds since Jan 1, 1970 (UTC)[cite: 1615].</field>
-            <field type="uint32_t" name="time_boot_ms">Uptime Timestamp: The relative time in milliseconds since the compute node was powered on[cite: 1616].</field>
-        </message>
+    <enum name="UGV_MOTOR_ERROR" bitmask="true">
+      <entry value="1" name="UGV_MOTOR_ERROR_OVER_SPEED"/>
+      <entry value="2" name="UGV_MOTOR_ERROR_OVERLOAD"/>
+      <entry value="4" name="UGV_MOTOR_ERROR_PHASE_LOSS"/>
+      <entry value="8" name="UGV_MOTOR_ERROR_BRAKE_FAULT"/>
+      <entry value="16" name="UGV_MOTOR_ERROR_ENCODER_FAULT"/>
+      <entry value="32" name="UGV_MOTOR_ERROR_OVER_TEMPERATURE"/>
+      <entry value="64" name="UGV_MOTOR_ERROR_HALL_FAULT"/>
+      <entry value="128" name="UGV_MOTOR_ERROR_STALLED"/>
+    </enum>
 
-        <message id="24" name="GPS_RAW_INT">
-            <description>Transmits raw, unfiltered GNSS navigation data back over telemetry streams[cite: 1584, 1618].</description>
-            <field type="uint64_t" name="time_usec">Timestamp (UNIX Epoch time or time since system boot) in microseconds[cite: 1619].</field>
-            <field type="int32_t" name="lat">Latitude (WGS84), expressed in degrees * 1E7[cite: 1620].</field>
-            <field type="int32_t" name="lon">Longitude (WGS84), expressed in degrees * 1E7[cite: 1620].</field>
-            <field type="int32_t" name="alt">Altitude (MSL), expressed in millimeters[cite: 1620, 1621].</field>
-            <field type="uint16_t" name="eph">Accuracy of the horizontal position, multiplied by 100[cite: 1621].</field>
-            <field type="uint16_t" name="epv">Accuracy of the vertical position, multiplied by 100 [Not Used][cite: 1622].</field>
-            <field type="uint16_t" name="vel">Speed of vehicle calculated by GNSS, expressed in cm/s[cite: 1622].</field>
-            <field type="uint16_t" name="cog">Direction of the movement of vehicle, unit: centidegree (divide by 100 for raw degree)[cite: 1622].</field>
-            <field type="uint8_t" name="fix_type" enum="GPS_FIX_TYPE">GNSS position solution fix quality tracking state[cite: 1623].</field>
-            <field type="uint8_t" name="satellites_visible">Number of satellites visible to the receiver backend array[cite: 1623].</field>
-        </message>
+    <enum name="UGV_MOTOR_CTRL_ERROR" bitmask="true">
+      <entry value="1" name="UGV_MOTOR_CTRL_ERROR_DRIVE"/>
+      <entry value="2" name="UGV_MOTOR_CTRL_ERROR_OVER_CURRENT"/>
+      <entry value="4" name="UGV_MOTOR_CTRL_ERROR_OVER_PRESSURE"/>
+      <entry value="8" name="UGV_MOTOR_CTRL_ERROR_UNDER_VOLTAGE"/>
+      <entry value="16" name="UGV_MOTOR_CTRL_ERROR_OVER_TEMPERATURE"/>
+      <entry value="32" name="UGV_MOTOR_CTRL_ERROR_CAN_COMM"/>
+    </enum>
 
-        <message id="69" name="MANUAL_CONTROL">
-            <description>Transmits manual steering reference coordinates from either the Hand Controller ADC maps or Ground Control Station sticks[cite: 1405, 1467, 1513, 1556].</description>
-            <field type="int16_t" name="x">Forward/Backward movement tracking vector metric range[cite: 1471, 1559].</field>
-            <field type="int16_t" name="y">Left/Right lateral translation axis coordinate mapping[cite: 1472, 1560].</field>
-            <field type="int16_t" name="z">Z-axis control displacement parameters mapping index (disabled/static max payload filter)[cite: 1472, 1560].</field>
-            <field type="int16_t" name="r">Rotational yaw control steering index metrics registry map (disabled/static max payload filter)[cite: 1472, 1560].</field>
-            <field type="uint16_t" name="buttons">16-bit bitmap tracking physical execution switches/buttons on the controller infrastructure[cite: 1473, 1560].</field>
-            <field type="uint16_t" name="buttons2">Extension Field: Secondary switch matrix tracking registry map (bitmap for buttons 17-32)[cite: 1473, 1561].</field>
-            <field type="uint8_t" name="target">Target execution system node component pointer routing index destination validation[cite: 1470, 1558].</field>
-            <field type="uint8_t" name="enabled_extensions">Extension Field: Bitmask tracking active axis/override indices mappings[cite: 1473, 1561].</field>
-            <field type="int16_t" name="s">Extension: Pitch-only custom mapping tracking scale parameter registry placeholder[cite: 1474, 1562].</field>
-            <field type="int16_t" name="t">Extension: Roll-only custom mapping tracking scale parameter registry placeholder[cite: 1474, 1562].</field>
-            <field type="int16_t" name="aux1">Extension: Auxiliary sensor continuous input data channel pipeline sequence 1[cite: 1474, 1562].</field>
-            <field type="int16_t" name="aux2">Extension: Auxiliary sensor continuous input data channel pipeline sequence 2[cite: 1474, 1562].</field>
-            <field type="int16_t" name="aux3">Extension: Auxiliary sensor continuous input data channel pipeline sequence 3[cite: 1474, 1562].</field>
-            <field type="int16_t" name="aux4">Extension: Auxiliary sensor continuous input data channel pipeline sequence 4[cite: 1474, 1562].</field>
-            <field type="int16_t" name="aux5">Extension: Auxiliary sensor continuous input data channel pipeline sequence 5[cite: 1474, 1562].</field>
-            <field type="int16_t" name="aux6">Extension: Auxiliary sensor continuous input data channel pipeline sequence 6[cite: 1475, 1562].</field>
-        </message>
+    <enum name="ICD_CAMERA_STREAM">
+      <entry value="0" name="ICD_CAMERA_RESERVED"/>
+      <entry value="1" name="ICD_CAMERA_STREAM_1"/>
+      <entry value="2" name="ICD_CAMERA_STREAM_2"/>
+      <entry value="3" name="ICD_CAMERA_STREAM_3"/>
+      <entry value="4" name="ICD_CAMERA_STREAM_4"/>
+    </enum>
 
-        <message id="76" name="COMMAND_LONG">
-            <description>Universal target task transaction structure payload handling operational modes, arming requests, lighting, and camera markers[cite: 1401, 1405, 1406, 1511, 1512, 1513, 1577].</description>
-            <field type="float" name="param1">Command Parameter 1: Lookahead custom flags, arm options, light profiles, or camera stream choice[cite: 1435, 1448, 1459, 1497, 1539, 1546, 1553, 1574, 1582].</field>
-            <field type="float" name="param2">Command Parameter 2: Custom Main Operating Mode selection, force arm keys, light commands, or range markers[cite: 1435, 1448, 1497, 1539, 1546, 1574, 1582].</field>
-            <field type="float" name="param3">Command Parameter 3: Hold state parameters optimization, lighting toggle states, or reserved space[cite: 1436, 1448, 1497, 1540, 1546, 1574, 1582].</field>
-            <field type="float" name="param4">Command Parameter 4: Speed sub-mode selection indexing matrices or configuration space variables[cite: 1436, 1459, 1541, 1553, 1582].</field>
-            <field type="float" name="param5">Command Parameter 5: Reserved framework task tracking sequence index structure parameters[cite: 1436, 1459, 1541, 1553].</field>
-            <field type="float" name="param6">Command Parameter 6: Reserved framework task tracking sequence index structure parameters[cite: 1436, 1459, 1541, 1553].</field>
-            <field type="float" name="param7">Command Parameter 7: Reserved framework task tracking sequence index structure parameters[cite: 1436, 1459, 1541, 1553].</field>
-            <field type="uint16_t" name="command">The specialized action or task verification identifier matching specific targeted MAV_CMD definitions[cite: 1434, 1447, 1458, 1496, 1538, 1545, 1552, 1571, 1581].</field>
-            <field type="uint8_t" name="target_system">System identification index tracking destination hardware architecture routing links[cite: 1433, 1445, 1457, 1495, 1536, 1543, 1551, 1571, 1579].</field>
-            <field type="uint8_t" name="target_component">Component identification index tracking destination hardware architecture routing links[cite: 1434, 1446, 1457, 1495, 1537, 1544, 1552, 1572, 1580].</field>
-            <field type="uint8_t" name="confirmation">Retransmission tracking count tracking parameter indexing sequence variations loop metrics[cite: 1434, 1447, 1458, 1496, 1538, 1545, 1553, 1573, 1581].</field>
-        </message>
+    <enum name="GPS_FIX_TYPE">
+      <entry value="0" name="GPS_FIX_TYPE_NO_GPS"/>
+      <entry value="1" name="GPS_FIX_TYPE_NO_FIX"/>
+      <entry value="2" name="GPS_FIX_TYPE_3D_FIX"/>
+      <entry value="3" name="GPS_FIX_TYPE_2D_FIX"/>
+      <entry value="4" name="GPS_FIX_TYPE_DGPS"/>
+      <entry value="5" name="GPS_FIX_TYPE_RTK_FLOAT"/>
+      <entry value="6" name="GPS_FIX_TYPE_RTK_FIXED"/>
+    </enum>
+  </enums>
 
-        <message id="77" name="COMMAND_ACK">
-            <description>Acknowledges transactional execution outcomes generated by an inbound COMMAND_LONG frame packet matrix[cite: 1401, 1405, 1406].</description>
-            <field type="int32_t" name="result_param2">Extended verification code metrics tracking (additional error diagnostic status information)[cite: 1442, 1453, 1465, 1504].</field>
-            <field type="uint16_t" name="command">Echos the command structural processing verification lookup code being acknowledged back to source[cite: 1441, 1452, 1464, 1503].</field>
-            <field type="uint8_t" name="result" enum="MAV_RESULT">System status command execution response rating output matrix tracking code[cite: 1441, 1452, 1465, 1503].</field>
-            <field type="uint8_t" name="progress">Execution timeline tracking threshold sequence mapping metric checklist percentages[cite: 1442, 1453, 1465, 1504].</field>
-            <field type="uint8_t" name="target_system">System identifier index mapping tracking code location target validation endpoint destination[cite: 1442, 1453, 1465, 1504].</field>
-            <field type="uint8_t" name="target_component">Component identifier index mapping tracking code location target validation endpoint destination[cite: 1442, 1453, 1465, 1504].</field>
-        </message>
+  <messages>
+    <message id="0" name="HEARTBEAT">
+      <field type="uint8_t" name="type" enum="MAV_TYPE"/>
+      <field type="uint8_t" name="autopilot" enum="MAV_AUTOPILOT"/>
+      <field type="uint8_t" name="base_mode" enum="MAV_MODE_FLAG"/>
+      <field type="uint32_t" name="custom_mode"/>
+      <field type="uint8_t" name="system_status" enum="MAV_STATE"/>
+      <field type="uint8_t_mavlink_version" name="mavlink_version"/>
+    </message>
 
-        <message id="109" name="RADIO_STATUS">
-            <description>Wireless data link structural transmission connectivity monitoring parameters matrix[cite: 1405, 1482].</description>
-            <field type="uint16_t" name="rxerrors">Hardware data packet dropping tracking index error parsing metrics registry[cite: 1485].</field>
-            <field type="uint16_t" name="fixed">Forward error correction diagnostic check validation routine performance counter[cite: 1486].</field>
-            <field type="uint8_t" name="rssi">Local node received signal strength environment tracking calculation validation scale indexing[cite: 1487].</field>
-            <field type="uint8_t" name="remrssi">Remote link node received signal strength tracking measurement parameter data return register[cite: 1487].</field>
-            <field type="uint8_t" name="txbuf">Transmitter ring buffer available memory storage space allocation capacity percentage index[cite: 1488].</field>
-            <field type="uint8_t" name="noise">Local background electromagnetic noise profile metric scale interference register values[cite: 1490].</field>
-            <field type="uint8_t" name="remnoise">Remote baseline environment electromagnetic background noise profiling validation scale parameters mapping[cite: 1490].</field>
-        </message>
+    <message id="2" name="SYSTEM_TIME">
+      <field type="uint64_t" name="time_unix_usec" units="us"/>
+      <field type="uint32_t" name="time_boot_ms" units="ms"/>
+    </message>
 
-        <message id="111" name="TIMESYNC">
-            <description>Time synchronization routing mechanism frame enabling latency parsing calculations based on cross link round trip delays[cite: 1401, 1405, 1511, 1512].</description>
-            <field type="int64_t" name="tc1">Target node computing system timestamp capture entry marker log index profile[cite: 1421, 1428, 1527, 1531].</field>
-            <field type="int64_t" name="ts1">Source node computing system timestamp capture entry marker log index profile[cite: 1423, 1428, 1528, 1532].</field>
-            <field type="uint8_t" name="target_system">Target system designation identity validator point reference index mapping location[cite: 1423, 1428, 1528, 1532].</field>
-            <field type="uint8_t" name="target_component">Target component designation identity validator point reference index mapping location[cite: 1423, 1429, 1529, 1533].</field>
-        </message>
+    <message id="24" name="GPS_RAW_INT">
+      <description>Transmits raw, unfiltered GNSS positioning data directly across telemetry broadcasts.</description>
+      <field type="uint64_t" name="time_usec" units="us"/>
+      <field type="int32_t" name="lat">Latitude (WGS84), expressed in degrees * 1E7</field>
+      <field type="int32_t" name="lon">Longitude (WGS84), expressed in degrees * 1E7</field>
+      <field type="int32_t" name="alt" units="mm">Altitude (MSL). Expressed in millimeters.</field>
+      <field type="uint16_t" name="eph">Accuracy of horizontal position, Multiplied by 100</field>
+      <field type="uint16_t" name="epv">Accuracy of vertical position, Multiplied by 100 [Not Used]</field>
+      <field type="uint16_t" name="vel" units="cm/s">Speed of vehicle calculated by GNSS, Expressed in cm/s</field>
+      <field type="uint16_t" name="cog" units="cdeg">Direction of movement, Unit: Centidegree (divide by 100 for raw value)</field>
+      <field type="uint8_t" name="fix_type" enum="GPS_FIX_TYPE">GNSS fix quality mapping indicator profile.</field>
+      <field type="uint8_t" name="satellites_visible">Number of satellites visible to tracking matrix hardware.</field>
+    </message>
 
-        <message id="50001" name="UGV_SYSTEM_INFO">
-            <description>Aggregated structural state information diagnostic broadcast telemetry matrix capturing real-time UGV data layers[cite: 1584, 1585].</description>
-            <field type="uint16_t" name="rear_mc_voltage">Rear motor controller voltage tracking state loop scale [Resolution: 0.1 V][cite: 1603].</field>
-            <field type="uint16_t" name="front_mc_voltage">Front motor controller voltage tracking state loop scale [Resolution: 0.1 V][cite: 1603].</field>
-            <field type="uint8_t" name="ts1_hour">System timestamp parameter log indicator field: Hour tracking (COMP_SUBSYSTEM_STATE)[cite: 1586, 1612].</field>
-            <field type="uint8_t" name="ts1_minute">System timestamp parameter log indicator field: Minute tracking (COMP_SUBSYSTEM_STATE)[cite: 1587, 1612].</field>
-            <field type="uint8_t" name="ts1_second">System timestamp parameter log indicator field: Second tracking (COMP_SUBSYSTEM_STATE)[cite: 1587, 1612].</field>
-            <field type="uint8_t" name="health_matrix_1">Bit 0-1: Rear MC, Bit 2-3: Front MC, Bit 4-5: HV Bat, Bit 6-7: LV Bat State indices[cite: 1587, 1588].</field>
-            <field type="uint8_t" name="health_matrix_2">Bit 0-1: LV PDU, Bit 2-3: DCDC 12V, Bit 4-5: DCDC 5V, Bit 6-7: VCU State indices[cite: 1588, 1589].</field>
-            <field type="uint8_t" name="health_matrix_3">Bit 0-1: FL Motor, Bit 2-3: RL Motor, Bit 4-5: FR Motor, Bit 6-7: RR Motor State indices[cite: 1589].</field>
-            <field type="uint8_t" name="health_matrix_4">Bit 0-1: UHF, Bit 2-3: LBand, Bit 4-5: Compute, Bit 6-7: Reserved State indices[cite: 1590].</field>
-            <field type="uint8_t" name="ts2_hour">Hardware processing log parameter update validation field: Hour (VCU_POWER_SOC)[cite: 1590, 1612].</field>
-            <field type="uint8_t" name="ts2_minute">Hardware processing log parameter update validation field: Minute (VCU_POWER_SOC)[cite: 1590, 1612].</field>
-            <field type="uint8_t" name="ts2_second">Hardware processing log parameter update validation field: Second (VCU_POWER_SOC)[cite: 1590, 1612].</field>
-            <field type="uint8_t" name="hv_battery_soc">Main high-voltage battery residual capability tracking metric percentage loop [0-100%].</field>
-            <field type="uint8_t" name="lv_battery_soc">Secondary low-voltage battery residual capability tracking metric percentage loop [0-100%].</field>
-            <field type="uint8_t" name="lv_battery_voltage">NEW IN V1.1: Secondary low-voltage battery voltage monitoring layout point [Scale: 0.1 V][cite: 814, 1591].</field>
-            <field type="uint8_t" name="dc_dc_12v_voltage">Stepdown power subsystem output reference diagnostic monitoring scale [Scale: 0.1 V].</field>
-            <field type="uint8_t" name="main_mode">Active operational routing structure indexing validation field matching ICD definitions.</field>
-            <field type="uint8_t" name="sub_mode">Active automated protective constraint threshold layer flag (Hold sub-mode status)[cite: 1591, 1592].</field>
-            <field type="uint8_t" name="speed_mode">Active velocity boundary configuration settings registry reference profile[cite: 1592].</field>
-            <field type="uint8_t" name="drive_mode">Active vehicle steering kinematic architecture configuration matrix reference index[cite: 1593].</field>
-            <field type="uint8_t" name="arm_mode">Active mechanical power transmission interlock authorization state flag[cite: 1593].</field>
-            <field type="uint8_t" name="intended_main_mode">Target configuration validation tracking command tracking register placeholder index[cite: 1593].</field>
-            <field type="uint8_t" name="intended_sub_mode">Target verification subsystem verification framework register profile track index[cite: 1593].</field>
-            <field type="uint8_t" name="intended_speed_mode">Target dynamic limits monitoring parameter execution register tracking placeholder index[cite: 1593].</field>
-            <field type="uint8_t" name="intended_drive_mode">Target kinematic control architecture reference register profile track index[cite: 1594].</field>
-            <field type="uint8_t" name="intended_arm_mode">Target safety status interlock requested validation flag monitor track index[cite: 1594].</field>
-            <field type="uint8_t" name="mode_change_reason">State machine mode transition execution diagnostic trigger tracking index[cite: 1594].</field>
-            <field type="uint8_t" name="ts3_hour">System update log parameters structural data metric entry index: Hour (VCU_DRIVE_HEALTH)[cite: 1594, 1612].</field>
-            <field type="uint8_t" name="ts3_minute">System update log parameters structural data metric entry index: Minute (VCU_DRIVE_HEALTH)[cite: 1594, 1612].</field>
-            <field type="uint8_t" name="ts3_second">System update log parameters structural data metric entry index: Second (VCU_DRIVE_HEALTH)[cite: 1594, 1612].</field>
-            <field type="uint8_t" name="rear_left_motor_faults">Bitfield mask identifying discrete bit-wise anomalies in Rear Left traction motor[cite: 1595].</field>
-            <field type="uint8_t" name="rear_right_motor_faults">Bitfield mask identifying discrete bit-wise anomalies in Rear Right traction motor[cite: 1596].</field>
-            <field type="uint8_t" name="front_left_motor_faults">Bitfield mask identifying discrete bit-wise anomalies in Front Left traction motor[cite: 1597, 1598].</field>
-            <field type="uint8_t" name="front_right_motor_faults">Bitfield mask identifying discrete bit-wise anomalies in Front Right traction motor[cite: 1599, 1600].</field>
-            <field type="uint8_t" name="rear_mc_fault">Bitfield mapping for structural component drive issues inside Rear Power Controller[cite: 1600, 1601].</field>
-            <field type="uint8_t" name="front_mc_fault">Bitfield mapping for structural component drive issues inside Front Power Controller[cite: 1601, 1602].</field>
-            <field type="int8_t" name="rear_mc_temperature">Thermal profiling index measuring internal Rear Power Stage junction temperature[cite: 1603].</field>
-            <field type="int8_t" name="front_mc_temperature">Thermal profiling index measuring internal Front Power Stage junction temperature[cite: 1603].</field>
-            <field type="uint8_t" name="ts4_hour">Power network verification matrix tracking indicator index validation: Hour (VCU_PDU_STATUS)[cite: 1603, 1612].</field>
-            <field type="uint8_t" name="ts4_minute">Power network verification matrix tracking indicator index validation: Minute (VCU_PDU_STATUS)[cite: 1604, 1612].</field>
-            <field type="uint8_t" name="ts4_second">Power network verification matrix tracking indicator index validation: Second (VCU_PDU_STATUS)[cite: 1604, 1612].</field>
-            <field type="uint8_t" name="pdu_channel_status">Integrated state allocation map showing discrete high/low line channel relay states[cite: 1604].</field>
-            <field type="uint8_t" name="ts5_hour">Safety circuit confirmation parameters profile tracking index structure: Hour (VCU_ESTOP_STATUS)[cite: 1606, 1612].</field>
-            <field type="uint8_t" name="ts5_minute">Safety circuit confirmation parameters profile tracking index structure: Minute (VCU_ESTOP_STATUS)[cite: 1606, 1612].</field>
-            <field type="uint8_t" name="ts5_second">Safety circuit confirmation parameters profile tracking index structure: Second (VCU_ESTOP_STATUS)[cite: 1606, 1612].</field>
-            <field type="uint8_t" name="estop_status">Bit 0: Emergency logic safety trip status circuit hardware detection switch[cite: 1606].</field>
-            <field type="uint8_t" name="ts6_hour">Interface checking structure parameters data entry validation logging: Hour (COMP_INTERFACE_HEALTH)[cite: 1606, 1607, 1612].</field>
-            <field type="uint8_t" name="ts6_minute">Interface checking structure parameters data entry validation logging: Minute (COMP_INTERFACE_HEALTH)[cite: 1607, 1612].</field>
-            <field type="uint8_t" name="ts6_second">Interface checking structure parameters data entry validation logging: Second (COMP_INTERFACE_HEALTH)[cite: 1607, 1612].</field>
-            <field type="uint8_t" name="compute_com_interface">Bit 0: Actuator CAN, Bit 1: Aux CAN, Bit 2: Ethernet, Bit 3: Serial Hand Controller status indicators[cite: 1607, 1608].</field>
-            <field type="uint8_t" name="ts7_hour">Low level core stack diagnostic monitoring frame metric registration: Hour (VCU_INTERFACE_HEALTH)[cite: 1608, 1612].</field>
-            <field type="uint8_t" name="ts7_minute">Low level core stack diagnostic monitoring frame metric registration: Minute (VCU_INTERFACE_HEALTH)[cite: 1608, 1612].</field>
-            <field type="uint8_t" name="ts7_second">Low level core stack diagnostic monitoring frame metric registration: Second (VCU_INTERFACE_HEALTH)[cite: 1608, 1612].</field>
-            <field type="uint8_t" name="vcu_com_interface">Bit 0: Actuator CAN, Bit 1: Control CAN, Bit 2: Aux CAN interface active tracking indicators[cite: 1608, 1609].</field>
-            <field type="uint8_t" name="ts8_hour">External hardware sensor checking diagnostic status logging parameters: Hour (VCU_LIGHT_STATUS)[cite: 1609, 1613].</field>
-            <field type="uint8_t" name="ts8_minute">External hardware sensor checking diagnostic status logging parameters: Minute (VCU_LIGHT_STATUS)[cite: 1609, 1613].</field>
-            <field type="uint8_t" name="ts8_second">External hardware sensor checking diagnostic status logging parameters: Second (VCU_LIGHT_STATUS)[cite: 1609, 1613].</field>
-            <field type="uint8_t" name="light_status">Bit 0: Driving Head, Bit 1: Front Fog Environment, Bit 2: Rear Active Brake light output current status[cite: 1609, 1610].</field>
-        </message>
-    </messages>
+    <message id="69" name="MANUAL_CONTROL">
+      <field type="uint8_t" name="target"/>
+      <field type="int16_t" name="x"/>
+      <field type="int16_t" name="y"/>
+      <field type="int16_t" name="z"/>
+      <field type="int16_t" name="r"/>
+      <field type="uint16_t" name="buttons"/>
+      <extensions/>
+      <field type="uint8_t" name="enabled_extensions"/>
+      <field type="int16_t" name="s"/>
+      <field type="int16_t" name="t"/>
+      <field type="int16_t" name="aux1"/>
+      <field type="int16_t" name="aux2"/>
+      <field type="int16_t" name="aux3"/>
+      <field type="int16_t" name="aux4"/>
+      <field type="int16_t" name="aux5"/>
+      <field type="int16_t" name="aux6"/>
+    </message>
+
+    <message id="76" name="COMMAND_LONG">
+      <field type="uint8_t" name="target_system"/>
+      <field type="uint8_t" name="target_component"/>
+      <field type="uint16_t" name="command" enum="MAV_CMD"/>
+      <field type="uint8_t" name="confirmation"/>
+      <field type="float" name="param1"/>
+      <field type="float" name="param2"/>
+      <field type="float" name="param3"/>
+      <field type="float" name="param4"/>
+      <field type="float" name="param5"/>
+      <field type="float" name="param6"/>
+      <field type="float" name="param7"/>
+    </message>
+
+    <message id="77" name="COMMAND_ACK">
+      <field type="uint16_t" name="command" enum="MAV_CMD"/>
+      <field type="uint8_t" name="result" enum="MAV_RESULT"/>
+      <extensions/>
+      <field type="uint8_t" name="progress" units="%"/>
+      <field type="int32_t" name="result_param2"/>
+      <field type="uint8_t" name="target_system"/>
+      <field type="uint8_t" name="target_component"/>
+    </message>
+
+    <message id="109" name="RADIO_STATUS">
+      <field type="uint8_t" name="rssi"/>
+      <field type="uint8_t" name="remrssi"/>
+      <field type="uint8_t" name="txbuf" units="%"/>
+      <field type="uint8_t" name="noise"/>
+      <field type="uint8_t" name="remnoise"/>
+      <field type="uint16_t" name="rxerrors"/>
+      <field type="uint16_t" name="fixed"/>
+    </message>
+
+    <message id="111" name="TIMESYNC">
+      <field type="int64_t" name="tc1" units="ns"/>
+      <field type="int64_t" name="ts1" units="ns"/>
+      <extensions/>
+      <field type="uint8_t" name="target_system"/>
+      <field type="uint8_t" name="target_component"/>
+    </message>
+
+    <message id="50001" name="UGV_SYSTEM_INFO">
+      <description>Reports comprehensive subsystem tracking and diagnostic status profiles of the UGV hardware layer.</description>
+
+      <field type="uint8_t" name="ts1_hour"></field>
+      <field type="uint8_t" name="ts1_minute"></field>
+      <field type="uint8_t" name="ts1_second"></field>
+
+      <field type="uint8_t" name="subsystem_health_1" enum="UGV_HEALTH_STATE">
+          Bit 0-1 : Left Motor Controller Health
+          Bit 2-3 : Right Motor Controller Health
+          Bit 4-5 : HV Battery Health
+          Bit 6-7 : LV Battery Health
+      </field>
+      <field type="uint8_t" name="subsystem_health_2" enum="UGV_HEALTH_STATE">
+        Bit 0-1 : LV PDU
+        Bit 2-3 : DC-DC 48V to 12V
+        Bit 4-5 : DC-DC 12V to 5V
+        Bit 6-7 : VCU
+      </field>
+      <field type="uint8_t" name="subsystem_health_3" enum="UGV_HEALTH_STATE">
+        Bit 0-1 : Front Left Motor
+        Bit 2-3 : Rear Left Motor
+        Bit 4-5 : Front Right Motor
+        Bit 6-7 : Rear Right Motor
+      </field>
+      <field type="uint8_t" name="subsystem_health_4" enum="UGV_HEALTH_STATE">
+        Bit 0-1 : UHF Radio
+        Bit 2-3 : LBAND Radio
+        Bit 4-5 : Compute
+        Bit 6-7 : Reserved
+      </field>
+
+      <field type="uint8_t" name="ts2_hour"></field>
+      <field type="uint8_t" name="ts2_minute"></field>
+      <field type="uint8_t" name="ts2_second"></field>
+
+      <field type="uint8_t" name="battery_soc" units="%">State of Charge remaining percentage metric.</field>
+
+      <field type="uint8_t" name="lv_battery_voltage">NEW IN V1.1: Secondary low-voltage battery system monitoring line [Scale: 0.1 V]</field>
+
+      <field type="uint8_t" name="main_mode" enum="UGV_MAIN_MODE"/>
+      <field type="uint8_t" name="sub_mode" enum="UGV_SUB_MODE"/>
+      <field type="uint8_t" name="speed_mode" enum="UGV_SPEED_MODE"/>
+      <field type="uint8_t" name="drive_mode" enum="UGV_DRIVE_MODE"/>
+      <field type="uint8_t" name="arm_mode" enum="MAV_BOOL"/>
+      <field type="uint8_t" name="intended_main_mode" enum="UGV_MAIN_MODE"/>
+      <field type="uint8_t" name="intended_sub_mode" enum="UGV_SUB_MODE"/>
+      <field type="uint8_t" name="intended_speed_mode" enum="UGV_SPEED_MODE"/>
+      <field type="uint8_t" name="intended_drive_mode" enum="UGV_DRIVE_MODE"/>
+      <field type="uint8_t" name="intended_arm_mode" enum="MAV_BOOL"/>
+      <field type="uint8_t" name="mode_change_reason" enum="MODE_CHANGE_REASON"/>
+
+      <field type="uint8_t" name="ts3_hour"></field>
+      <field type="uint8_t" name="ts3_minute"></field>
+      <field type="uint8_t" name="ts3_second"></field>
+
+      <field type="uint8_t" name="rear_left_motor_faults" enum="UGV_MOTOR_ERROR"/>
+      <field type="uint8_t" name="rear_right_motor_faults" enum="UGV_MOTOR_ERROR"/>
+      <field type="uint8_t" name="front_left_motor_faults" enum="UGV_MOTOR_ERROR"/>
+      <field type="uint8_t" name="front_right_motor_faults" enum="UGV_MOTOR_ERROR"/>
+
+      <field type="uint8_t" name="rear_mc_faults" enum="UGV_MOTOR_CTRL_ERROR"/>
+      <field type="uint8_t" name="front_mc_faults" enum="UGV_MOTOR_CTRL_ERROR"/>
+
+      <field type="uint8_t" name="rear_mc_voltage" units="0.1V"/>
+      <field type="uint8_t" name="front_mc_voltage" units="0.1V"/>
+      <field type="uint8_t" name="rear_mc_temperature" units="degC"/>
+      <field type="uint8_t" name="front_mc_temperature" units="degC"/>
+
+      <field type="uint8_t" name="light_status">
+        bit 0: head light state
+        bit 1: front fog light state
+        bit 2: rear light state
+      </field>
+      <field type="uint8_t" name="pdu_channel_status">
+        bit 0: lv pdu channel 1 state
+        bit 1: lv pdu channel 2 state
+        bit 2: lv pdu channel 3 state
+        bit 3: lv pdu channel 4 state
+        bit 4: lv pdu channel 5 state
+        bit 5: lv pdu channel 6 state
+        bit 6: lv pdu channel 7 state
+        bit 7: lv pdu channel 8 state
+      </field>
+    </message>
+
+  </messages>
 </mavlink>
