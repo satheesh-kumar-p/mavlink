@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mavlink>
     <version>2</version>
-    <dialect>scout_system</dialect>
 
     <enums>
         <enum name="MAV_STATE">
@@ -178,7 +177,7 @@
             <field type="uint8_t" name="target_component">Target component designation identity validator point reference index mapping location[cite: 1423, 1429, 1529, 1533].</field>
         </message>
 
-        <message id="50001" name="COMP_UGV_STATUS">
+        <message id="50001" name="UGV_SYSTEM_INFO">
             <description>Aggregated structural state information diagnostic broadcast telemetry matrix capturing real-time UGV data layers[cite: 1584, 1585].</description>
             <field type="uint16_t" name="rear_mc_voltage">Rear motor controller voltage tracking state loop scale [Resolution: 0.1 V][cite: 1603].</field>
             <field type="uint16_t" name="front_mc_voltage">Front motor controller voltage tracking state loop scale [Resolution: 0.1 V][cite: 1603].</field>
