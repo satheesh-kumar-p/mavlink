@@ -310,6 +310,21 @@
         <description>Real-Time Kinematic absolute positioning fix layer verified with high validation phase lock.</description>
       </entry>
     </enum>
+    <enum name="PUSH_BUTTONS" bitmask="true">
+      <description>Used to indicate the current state of the extra feature buttons</description>
+      <entry value="1" name="EXTRA_FEATURE_1_PRESS">
+        <description> a single short press of extra feature 1 button. </description>
+      </entry>
+      <entry value="2" name="EXTRA_FEATURE_1_LONG_PRESS">
+        <description> a long press of extra feature 1 button. </description>
+      </entry>
+      <entry value="4" name="EXTRA_FEATURE_2_PRESS">
+        <description> a single short press of extra feature 2 button. </description>
+      </entry>
+      <entry value="8" name="EXTRA_FEATURE_2_LONG_PRESS">
+        <description> a long press of extra feature 2 button. </description>
+      </entry>
+    </enum>
   </enums>
 
   <messages>
