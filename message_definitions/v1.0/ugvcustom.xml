@@ -109,7 +109,7 @@
       <field type="uint16_t" name="vision_gmsl_health">Bytes: 54-55. High speed imaging array deserializer camera lane connection validation tracking profile lines. Bytes 54(4) to 55(4): Nvidia Jetson camera streaming hardware pipelines status tracking registers checking high resolution processing nodes covering Vision dedicated Ethernet channel, and high speed serial data pipelines GMSL-1 down through GMSL-8 interface connections (0: Inactive, 1: Active).</field>
       <field type="uint8_t" name="home_initialization">Byte: 56. Navigation coordinate parameters initialization validation status registry checklist. Byte 56(0): Home baseline positioning coordinates validation flag (0: Not set / Lock missing, 1: Locked and Set). Byte 56(1): Autonomy navigation mission trajectory target recording pathway state flag (0: OFF, 1: ON / Active saving).</field>
       <field type="int32_t" name="lat">Bytes: 57-60. Reference coordinates anchor latitude data value allocation field space. Valid coordinates only return when locking parameter 56(0) equals 1. Scaling factor constraint: 1e-7 integer format.</field>
-      <field type="int32_t" name="long">Bytes: 61-64. Reference coordinates anchor longitude data value allocation field space. Valid coordinates only return when locking parameter 56(0) equals 1. Scaling factor constraint: 1e-7 integer format.</field>
+      <field type="int32_t" name="lon">Bytes: 61-64. Reference coordinates anchor longitude data value allocation field space. Valid coordinates only return when locking parameter 56(0) equals 1. Scaling factor constraint: 1e-7 integer format.</field>
     </message>
 
     <message id="2" name="SYSTEM_TIME">
