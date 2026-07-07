@@ -8,7 +8,7 @@
       <field type="uint8_t" name="base_mode">Bytes: 8. System wide flag bitmask. COMP sends 1 (Custom mode enable). HC and GCS send 0 (No MAV_MODE_FLAG enabled).</field>
       <field type="uint32_t" name="custom_mode">Bytes: 9-12 (HC/GCS) or Bytes 9 (COMP). Drive mode rules. COMP sends 1: Speed, 2: Torque, 3: Torque with speed limit. HC and GCS send 0 (Not used).</field>
       <field type="uint8_t" name="system_status">Bytes: 13 (HC/GCS) or Bytes 17 (COMP). Status flags. Mapped as 3: Standby mode, 4: Active mode.</field>
-      <field type="uint8_t" name="mavlink_version">Bytes: 14 (HC/GCS) or Bytes 18 (COMP). Internal communication library version indicator injected automatically by protocol wire layer.</field>
+      <field type="uint8_t_mavlink_version" name="mavlink_version">MAVLink version, not writable by user, gets added by protocol because of magic data type: uint8_t_mavlink_version</field>
     </message>
 
     <message id="111" name="TIMESYNC">
